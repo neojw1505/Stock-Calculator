@@ -2,9 +2,12 @@ import tkinter as tk
 from tkinter import *
 
 #==== Initialize ====#
+
 root = tk.Tk()
 root.geometry("500x500")
 root.title("Mini Project: A Stock Calculator")
+
+#========== Calculate Profit ==========#
 
 def calculateProfitUI():
     window = tk.Tk()
@@ -37,13 +40,13 @@ def calculateProfitUI():
     # Total Commission Fee 
     commission_fee_label = tk.Label(window,text="Commission Fee:", font=("Times New Roman", 15))
     commission_fee_label.grid(column=0, row=4)
-    commission_fee_entry = tk.Entry(window,text="")
+    commission_fee_entry = tk.Entry(window,text="",state="readonly")
     commission_fee_entry.grid(column=1, row=4)
 
     # Profit 
     profit_label = tk.Label(window,text="Profit:", font=("Times New Roman", 15))
     profit_label.grid(column=0, row=5)
-    profit_entry = tk.Entry(window,text="")
+    profit_entry = tk.Entry(window,text="",state="readonly")
     profit_entry.grid(column=1, row=5)
 
     def calculateCommissionFee():
@@ -51,17 +54,28 @@ def calculateProfitUI():
         return commsFee
 
     def calculateProfit():
+        commission_fee_entry.configure(state='normal')
         commission_fee_entry.insert(0,calculateCommissionFee())
-        profit = '{:.2f}'.format(((float(Exit_price_entry.get()) - float(Entry_price_entry.get())) * float(Stock_entry.get())) - float(commission_fee_entry.get()))
-        profit_entry.insert(0,profit)
+        commission_fee_entry.configure(state='readonly')
 
+        profit = '{:.2f}'.format(((float(Exit_price_entry.get()) - float(Entry_price_entry.get())) * float(Stock_entry.get())) - float(commission_fee_entry.get()))
+        profit_entry.configure(state='normal')
+        profit_entry.insert(0,profit)
+        profit_entry.configure(state='readonly')
+        
     def reset():
         Entry_price_entry.delete(0, END)
         Exit_price_entry.delete(0, END)
         Stock_entry.delete(0, END)
-        profit_entry.delete(0, END)
         commission_rps_entry.delete(0, END)
+
+        commission_fee_entry.configure(state='normal')
         commission_fee_entry.delete(0, END)
+        commission_fee_entry.configure(state='readonly')
+        
+        profit_entry.configure(state='normal')
+        profit_entry.delete(0, END)
+        profit_entry.configure(state='readonly')
 
     def close():
         window.destroy()
@@ -74,6 +88,8 @@ def calculateProfitUI():
 
     btn_close = tk.Button(window, text="Close", command=close) 
     btn_close.grid(column=1, row=8)
+
+#========== Dollar Cost Averaging ==========#
 
 def dollarCostAveragingUI():
     window = tk.Tk()
@@ -106,16 +122,26 @@ def dollarCostAveragingUI():
     # New Price Per Share
     new_pps_label = tk.Label(window,text="New Price Per Share :", font=("Times New Roman", 15))
     new_pps_label.grid(column=0, row=4)
-    new_pps = tk.Entry(window,text="")
-    new_pps.grid(column=1, row=4)
-    
+    new_pps_entry = tk.Entry(window,text="",state='readonly')
+    new_pps_entry.grid(column=1, row=4)
+
     def calculateDCA():
-        pass
+        total_value_of_shares = float(curr_price_entry.get()) * float(curr_qty_entry.get()) + float(avg_down_price_entry.get()) * float(avg_down_qty_entry.get())
+        total_num_of_shares = float(curr_qty_entry.get()) + float(avg_down_qty_entry.get())
+        new_price_per_share = '{:.2f}'.format(total_value_of_shares / total_num_of_shares)
+        new_pps_entry.configure(state='normal')
+        new_pps_entry.insert(0,new_price_per_share)
+        new_pps_entry.configure(state='readonly')
 
     def reset():
         curr_price_entry.delete(0, END)
         curr_qty_entry.delete(0, END)
         avg_down_price_entry.delete(0,END)
+        avg_down_qty_entry.delete(0,END)
+        new_pps_entry.configure(state='normal')
+        new_pps_entry.delete(0,END)
+        new_pps_entry.configure(state='readonly')
+
 
     def close():
         window.destroy()
@@ -129,17 +155,18 @@ def dollarCostAveragingUI():
     btn_close = tk.Button(window, text="Close", command=close) 
     btn_close.grid(column=1, row=8)
 
+
 ###==== Button Options ====###
 
-# Calculate Profit #
+# Calculate Profit Button #
 btn_cal_profit = tk.Button(root, text="Calculate Profit", command=calculateProfitUI)
 btn_cal_profit.grid(column=1, row=1)
 
-# Dollar Cost Averaging #
+# Dollar Cost Averaging Button #
 btn_dollar_cost_avg = tk.Button(root, text="Dollar Cost Averaging", command=dollarCostAveragingUI)
 btn_dollar_cost_avg.grid(column=1, row=2)
 
-# Trade History #
+# Trade History Button #
 btn_trade_history = tk.Button(root, text="Trade History", command="")
 btn_trade_history.grid(column=1, row=3)
 
